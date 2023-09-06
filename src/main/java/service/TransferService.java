@@ -33,6 +33,8 @@ public class TransferService {
                         logger.info("The amount of money {} was withdraw from ID: {}", moneyAmount, accountIDFrom);
                         accountTo.addMoney(moneyAmount);
                         logger.info("The amount of money {} eas add to ID: {}", moneyAmount, accountIDTo);
+                        logger.info("Account ID: {} | account balance is {}", accountIDFrom, accountFrom.getMoney());
+                        logger.info("Account ID: {} | account balance is {}", accountIDTo, accountTo.getMoney());
                     } finally {
                         accountFrom.getLock().writeLock().unlock();
                         accountTo.getLock().writeLock().unlock();
