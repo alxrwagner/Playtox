@@ -19,38 +19,20 @@ public class TransferService {
     public void transfer(String accountIDFrom, String accountIDTo, int moneyAmount) {
         logger.info("A transfer operation has been started. From ID: {} | To ID: {}", accountIDFrom, accountIDTo);
 
-        if (accountRepository.checkingAccount(accountIDFrom)) {
-            Account accountFrom = accountRepository.findAccountByID(accountIDFrom);
 
-            if (accountRepository.checkingAccount(accountIDTo)) {
-                if (checkMoneyAmount(accountFrom, moneyAmount)) {
-                    Account accountTo = accountRepository.findAccountByID((accountIDTo));
-                    accountFrom.getLock().writeLock().lock();
-                    accountTo.getLock().writeLock().lock();
+        Account accountFrom = accountRepository.findAccountByID(accountIDFrom).orElseThrow(NotFoundAccount::new);
+        Account accountTo = accountRepository.findAccountByID(accountIDFrom).orElseThrow(NotFoundAccount::new);
 
-                    try {
-                        accountFrom.withdrawMoney(moneyAmount);
-                        logger.info("The amount of money {} was withdraw from ID: {}", moneyAmount, accountIDFrom);
-                        accountTo.addMoney(moneyAmount);
-                        logger.info("The amount of money {} eas add to ID: {}", moneyAmount, accountIDTo);
-                        logger.info("Account ID: {} | account balance is {}", accountIDFrom, accountFrom.getMoney());
-                        logger.info("Account ID: {} | account balance is {}", accountIDTo, accountTo.getMoney());
-                    } finally {
-                        accountFrom.getLock().writeLock().unlock();
-                        accountTo.getLock().writeLock().unlock();
-                    }
-                } else {
-                    throw new NotEnoughMoneyException("Not enough money in the account " + accountIDFrom);
-                }
-            } else {
-                throw new NotFoundAccount("Not found account " + accountIDTo);
-            }
-        }else {
-            throw new NotFoundAccount("Not found account " + accountIDFrom);
+        if (accountFrom.getMoney() >= moneyAmount) {
+            accountFrom.withdrawMoney(moneyAmount);
+            logger.info("The amount of money {} was withdraw from ID: {}", moneyAmount, accountIDFrom);
+            accountTo.addMoney(moneyAmount);
+            logger.info("The amount of money {} was add to ID: {}", moneyAmount, accountIDTo);
+            logger.info("Account ID: {} | account balance is {}", accountIDFrom, accountFrom.getMoney());
+            logger.info("Account ID: {} | account balance is {}", accountIDTo, accountTo.getMoney());
+
+        } else {
+            throw new NotEnoughMoneyException("Not enough money in the account " + accountIDFrom);
         }
-    }
-
-    private boolean checkMoneyAmount(Account account, int moneyAmount) {
-        return account.getMoney() >= moneyAmount;
     }
 }

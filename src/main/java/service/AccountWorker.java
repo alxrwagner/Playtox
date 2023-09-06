@@ -1,39 +1,38 @@
 package service;
 
-import com.example.playtox.model.Account;
-
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.atomic.AtomicInteger;
 
-public class AccountWorker extends Thread{
-    private final Account account1;
-    private final Account account2;
+public class AccountWorker extends Thread {
+    private final String account1;
+    private final String account2;
     private final TransferService transferService;
 
-    private static final int limitOperation = 30;
+    private final int limitOperation = 30;
+    private static AtomicInteger counterOperation = new AtomicInteger(0);
 
-    public AccountWorker(Account account1, Account account2, TransferService transferService) {
-        this.account1 = account1;
-        this.account2 = account2;
+    public AccountWorker(String accountIdFrom, String accountIdTo, TransferService transferService) {
+        this.account1 = accountIdFrom;
+        this.account2 = accountIdTo;
         this.transferService = transferService;
     }
 
     @Override
-    public void run(){
+    public void run() {
         ThreadLocalRandom random = ThreadLocalRandom.current();
         String idFrom;
         String idTo;
-        int counter = 0;
 
-        while (counter < limitOperation){
-            if (random.nextBoolean()){
-                idFrom = account1.getID();
-                idTo = account2.getID();
+        while (counterOperation.get() < limitOperation) {
+            if (random.nextBoolean()) {
+                idFrom = account1;
+                idTo = account2;
             } else {
-                idFrom = account2.getID();
-                idTo = account1.getID();
+                idFrom = account2;
+                idTo = account1;
             }
             transferService.transfer(idFrom, idTo, random.nextInt(5000));
-            counter++;
+            counterOperation.set(counterOperation.incrementAndGet());
 
 
             try {

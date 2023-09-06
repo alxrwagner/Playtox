@@ -29,6 +29,9 @@ public class Account {
     }
 
     public void addMoney(int moneyAmount){
+        if (moneyAmount <= 0){
+            throw new IllegalArgumentException("Transfer amount must be greater than 0");
+        }
         lockAccount.writeLock().lock();
         try {
             this.money += moneyAmount;
@@ -38,15 +41,14 @@ public class Account {
     }
 
     public void withdrawMoney(int moneyAmount){
+        if (moneyAmount <= 0){
+            throw new IllegalArgumentException("Transfer amount must be greater than 0");
+        }
         lockAccount.writeLock().lock();
         try {
                 this.money -= moneyAmount;
         }finally {
             lockAccount.writeLock().unlock();
         }
-    }
-
-    public ReadWriteLock getLock(){
-        return lockAccount;
     }
 }

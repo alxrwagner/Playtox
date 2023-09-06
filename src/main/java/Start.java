@@ -17,8 +17,8 @@ public class Start {
         repository.addAccount(a4);
 
         TransferService transferService = new TransferService(repository);
-        AccountWorker worker = new AccountWorker(a1, a2, transferService);
-        AccountWorker worker2 = new AccountWorker(a3, a4, transferService);
+        AccountWorker worker = new AccountWorker(a1.getID(), a2.getID(), transferService);
+        AccountWorker worker2 = new AccountWorker(a3.getID(), a4.getID(), transferService);
 
         worker.start();
         worker2.start();

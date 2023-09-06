@@ -4,4 +4,8 @@ public class NotFoundAccount extends RuntimeException{
     public NotFoundAccount(String message) {
         super(message);
     }
+
+    public NotFoundAccount() {
+
+    }
 }
