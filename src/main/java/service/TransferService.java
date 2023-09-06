@@ -16,9 +16,8 @@ public class TransferService {
         this.accountRepository = accountRepository;
     }
 
-    public void transfer(String accountIDFrom, String accountIDTo, int moneyAmount) {
+    public void transfer(String accountIDFrom, String accountIDTo, int moneyAmount) throws NotFoundAccount {
         logger.info("A transfer operation has been started. From ID: {} | To ID: {}", accountIDFrom, accountIDTo);
-
 
         Account accountFrom = accountRepository.findAccountByID(accountIDFrom).orElseThrow(NotFoundAccount::new);
         Account accountTo = accountRepository.findAccountByID(accountIDFrom).orElseThrow(NotFoundAccount::new);
